@@ -41,7 +41,7 @@ Optioneel:
 
 - `ETHERSCAN_API_KEY` — voor holder-aantallen (zie hierboven)
 - `SCAN_CHAINS` — comma-separated uit `hyperevm`, `eth`, `bsc` (standaard alleen `hyperevm`)
-- `MC_THRESHOLDS` — comma-separated marketcap-drempels in USD (standaard `10000,50000`)
+- `MC_THRESHOLDS` — marketcap-drempels + het minimale 24u-volume dat daarbij hoort, formaat `<marketcap>:<min_volume_24h>,...` (standaard `10000:8000,50000:30000` — dus 10K mc vereist ≥8K volume, 50K mc vereist ≥30K volume). Een coin die wel de marketcap haalt maar niet genoeg volume heeft, wordt pas gealarmeerd zodra het volume ook meekomt.
 - `MIN_LIQUIDITY_USD` — negeer pools met minder liquidity (ruis/scam-filter)
 - `POLL_INTERVAL_SECONDS` — scan-interval (standaard 60s)
 

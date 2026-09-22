@@ -22,6 +22,12 @@ class ChainConfig:
     holder_api_chainid: int | None = None
 
 
+@dataclass(frozen=True)
+class Threshold:
+    market_cap_usd: int
+    min_volume_24h_usd: int
+
+
 CHAINS: dict[str, ChainConfig] = {
     "eth": ChainConfig(
         key="eth",
@@ -66,16 +72,27 @@ def _parse_chains(raw: str) -> list[str]:
     return keys or list(CHAINS)
 
 
-def _parse_thresholds(raw: str) -> list[int]:
-    values = {int(t.strip()) for t in raw.split(",") if t.strip()}
-    return sorted(values) or [10_000, 50_000]
+def _parse_thresholds(raw: str) -> list[Threshold]:
+    """Formaat: "<marketcap>:<min_volume_24h>,..." bv. "10000:8000,50000:30000"."""
+    thresholds = []
+    for chunk in raw.split(","):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        mc_str, _, vol_str = chunk.partition(":")
+        thresholds.append(Threshold(market_cap_usd=int(mc_str), min_volume_24h_usd=int(vol_str)))
+    thresholds.sort(key=lambda t: t.market_cap_usd)
+    return thresholds or [
+        Threshold(market_cap_usd=10_000, min_volume_24h_usd=8_000),
+        Threshold(market_cap_usd=50_000, min_volume_24h_usd=30_000),
+    ]
 
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 SCAN_CHAINS = _parse_chains(os.environ.get("SCAN_CHAINS", "hyperevm"))
-MC_THRESHOLDS = _parse_thresholds(os.environ.get("MC_THRESHOLDS", "10000,50000"))
+THRESHOLDS = _parse_thresholds(os.environ.get("MC_THRESHOLDS", "10000:8000,50000:30000"))
 MIN_LIQUIDITY_USD = float(os.environ.get("MIN_LIQUIDITY_USD", "1000"))
 POLL_INTERVAL_SECONDS = int(os.environ.get("POLL_INTERVAL_SECONDS", "60"))
 STATE_FILE = os.environ.get("STATE_FILE", "state.json")
