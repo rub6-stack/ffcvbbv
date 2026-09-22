@@ -1,6 +1,7 @@
 # EVM Coin Scanner → Telegram
 
-Bot die nieuwe EVM-tokens (standaard Ethereum + BNB Chain) scant en een
+Bot die nieuwe EVM-tokens (standaard alleen **HyperEVM**, optioneel ook
+Ethereum/BNB Chain) scant en een
 Telegram-alert stuurt zodra de marketcap boven de ingestelde drempels komt
 (standaard **$10K** en **$50K**). Elke alert bevat marketcap, liquidity,
 volume, prijsverandering, holders (optioneel) en links naar de chart en de
@@ -14,11 +15,11 @@ block explorer.
 2. **Verrijking** — voor elke coin die een drempel passeert wordt extra data
    opgehaald bij [DexScreener](https://dexscreener.com/) (chart-link,
    actuele volumes/prijzen).
-3. **Holders** — optioneel via de Etherscan v2 unified API (zelfde key werkt
-   voor Ethereum én BNB Chain). Let op: het `tokenholdercount`-endpoint
-   vereist meestal een **betaald Etherscan/BscScan Pro-abonnement**. Zonder
-   (werkende) key laat de bot het holders-veld gewoon leeg i.p.v. te
-   crashen.
+3. **Holders** — optioneel via een Etherscan-compatibele explorer-API per
+   chain (`HYPEREVMSCAN_API_KEY` voor HyperEVM, `ETHERSCAN_API_KEY` voor
+   Ethereum/BNB Chain). Let op: het `tokenholdercount`-endpoint vereist bij
+   deze explorers meestal een **betaald Pro-abonnement**. Zonder (werkende)
+   key laat de bot het holders-veld gewoon leeg i.p.v. te crashen.
 4. **State** — welke coin al op welke drempel is gealarmeerd wordt lokaal
    bijgehouden in `state.json`, zodat je niet dubbel wordt gespamd.
 
@@ -39,7 +40,7 @@ Vul in `.env` minimaal in:
 Optioneel:
 
 - `ETHERSCAN_API_KEY` — voor holder-aantallen (zie hierboven)
-- `SCAN_CHAINS` — `eth`, `bsc`, of `eth,bsc` (standaard beide)
+- `SCAN_CHAINS` — comma-separated uit `hyperevm`, `eth`, `bsc` (standaard alleen `hyperevm`)
 - `MC_THRESHOLDS` — comma-separated marketcap-drempels in USD (standaard `10000,50000`)
 - `MIN_LIQUIDITY_USD` — negeer pools met minder liquidity (ruis/scam-filter)
 - `POLL_INTERVAL_SECONDS` — scan-interval (standaard 60s)

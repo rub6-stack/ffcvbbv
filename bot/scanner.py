@@ -72,7 +72,7 @@ def _scan_chain(chain_key: str, bot_state: dict) -> None:
             if mc >= threshold and threshold not in entry["alerted"]:
                 pairs = dexscreener.get_token_pairs(chain_cfg.dexscreener_chain, pool["token_address"])
                 pair = dexscreener.best_pair(pairs)
-                holder_count = holders.get_holder_count(chain_cfg.etherscan_chainid, pool["token_address"])
+                holder_count = holders.get_holder_count(chain_cfg, pool["token_address"])
 
                 message = _build_message(chain_cfg, pool, pair, holder_count, threshold)
                 if telegram.send_message(message):
