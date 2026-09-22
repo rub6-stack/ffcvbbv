@@ -80,6 +80,19 @@ sudo systemctl enable --now coin-scanner
 pm2 start main.py --interpreter venv/bin/python --name coin-scanner
 ```
 
+**of Railway** (aanbevolen als je niet zelf een server wilt beheren):
+
+1. Ga naar [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo** → kies `rub6-stack/ffcvbbv`.
+2. Railway herkent automatisch dat het een Python-project is (via `railway.json`/`Procfile` in deze repo) en start `python3 main.py` als worker-service. Je hoeft geen webserver/poort te configureren — dit is een achtergrondproces, geen website.
+3. Ga naar het project → tabblad **Variables** en voeg toe:
+   - `TELEGRAM_BOT_TOKEN`
+   - `TELEGRAM_CHAT_ID`
+   - eventueel `ETHERSCAN_API_KEY`, `SCAN_CHAINS`, `MC_THRESHOLDS`, etc. (zie `.env.example`)
+4. Railway deployt automatisch en houdt het proces 24/7 draaiend (met auto-restart bij een crash, zie `railway.json`).
+5. Bij elke nieuwe push naar deze branch/main redeployt Railway automatisch.
+
+Let op: `state.json` wordt lokaal op de container opgeslagen. Bij een redeploy op Railway kan dit bestand resetten, waardoor je mogelijk opnieuw een alert krijgt voor coins die eerder al gealarmeerd waren. Voor puur eigen gebruik is dat prima; wil je dit robuuster (bv. state in een database), laat het weten.
+
 ## Beperkingen om te weten
 
 - **Marketcap van gloednieuwe tokens** is vaak (nog) niet bekend als "echte"
